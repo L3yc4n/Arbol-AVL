@@ -56,7 +56,7 @@ public class listaEnlazada {
         }
         String mensaje = "Lista Enlazada - Producto\n";
         while(actual != null){
-            Producto a = new Producto();
+            Producto a =  actual.getProducto();
             mensaje += a.getCodiProd() + " - " + a.getNombProd() + " - " + a.getPrecProd() + " - " + a.getCantProd() + " - " + a.getCostoProd() + "\n";
             actual = actual.getAnterior();
         }
