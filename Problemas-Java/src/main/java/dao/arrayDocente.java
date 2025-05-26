@@ -60,10 +60,20 @@ public class arrayDocente {
     }
     
     public void eliminar(){
-         if (lista.isEmpty()) {
+//         if (lista.isEmpty()) {
+//            lista.remove(ubi);
+//        }else if(ubi>=lista.size()){
+//            ubi=lista.size()-1;
+//        }
+//         
+         
+          if (!es_vacio()) {
             lista.remove(ubi);
-        }else if(ubi>=lista.size()){
-            ubi=lista.size()-1;
+            if (lista.isEmpty()) {
+                ubi = -1; // no hay anda mas
+            } else if (ubi >= lista.size()) {
+                ubi = lista.size() - 1; 
+            }
         }
     }
     
