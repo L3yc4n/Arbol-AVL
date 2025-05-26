@@ -25,10 +25,10 @@ public class listaEnlazada {
                 actual = actual.getAnterior();
             } 
             actual.setSiguiente(nuevoNodo);
+            nuevoNodo.setAnterior(actual);
         }
     }
     
-    //Metodo para eliminar el ultimo nodo
     public void eliminarFinal(){
         if(cabeza == null){
             JOptionPane.showMessageDialog(null, "La lista esta Vacia, no hay nada que eliminar.");
@@ -45,7 +45,6 @@ public class listaEnlazada {
         }
     }
     
-    //Metodo para mostrar la lista
     public void mostrarEnlazadaAtras(){
         if(cabeza == null){
             JOptionPane.showMessageDialog(null, "La lista esta Vacia, no hay nada que mostrar.");
@@ -67,7 +66,6 @@ public class listaEnlazada {
     public double calcProm(){
         double prom = 0;
         if(cabeza == null){
-            //JOptionPane.showMessageDialog(null, "No hay productos, promedio vacio.");
             return 0;
         } 
         Nodo actual = cabeza;
