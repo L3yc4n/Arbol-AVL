@@ -303,7 +303,7 @@ public class FraDocente extends javax.swing.JFrame {
         if(agregando == true){
            try{
             Date fecha = sdf.parse(fechanacimiento);
-            Docente d = new Docente(Integer.parseInt(codigo),nombre,direccion,fecha,Double.parseDouble(talla),correo);
+            Docente d = new Docente(codigo,nombre,direccion,fecha,Double.parseDouble(talla),correo);
             // Aquí puedes agregar el alumno a tu lista
             list.agregar(d);
             } catch (ParseException e) {
@@ -313,10 +313,10 @@ public class FraDocente extends javax.swing.JFrame {
             habilitarEdicion(true);
         } else {
             try{
-            Date fecha = sdf.parse(fecNac);
-            Alumno a = new Alumno(Integer.parseInt(codigo),nombre,Double.parseDouble(nota),fecha);
+            Date fecha = sdf.parse(fechanacimiento);
+            Docente d = new Docente(codigo,nombre,direccion,fecha,Double.parseDouble(talla),correo);
             // Aquí puedes agregar el alumno a tu lista
-            list.setAlumno(a);
+            list.setDocente(d);
             JOptionPane.showMessageDialog(rootPane, "Editado.");
             } catch (ParseException e) {
                 JOptionPane.showMessageDialog(null, "Error en la fecha. Usa el formato dd/MM/yy");
@@ -328,27 +328,69 @@ public class FraDocente extends javax.swing.JFrame {
     }//GEN-LAST:event_btnGrabarActionPerformed
 
     private void btnPrimeroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrimeroActionPerformed
-        // TODO add your handling code here:
+       list.primero();
+        Docente d = list.getDocente();  
+         txtCodigo.setText(String.valueOf(d.getCodigo()));
+            txtNombre.setText(d.getNombre());
+            txtDireccion.setText(d.getDireccion());
+            txtNacimiento.setText(sdf.format(d.getFechanacimiento()));
+            txtTalla.setText(String.valueOf(d.getTalla()));
+            txtCorreo.setText(d.getCorreo());
     }//GEN-LAST:event_btnPrimeroActionPerformed
 
     private void btnAnteriorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnteriorActionPerformed
-        // TODO add your handling code here:
+           list.anterior();
+        Docente d = list.getDocente();  
+         txtCodigo.setText(String.valueOf(d.getCodigo()));
+            txtNombre.setText(d.getNombre());
+            txtDireccion.setText(d.getDireccion());
+            txtNacimiento.setText(sdf.format(d.getFechanacimiento()));
+            txtTalla.setText(String.valueOf(d.getTalla()));
+            txtCorreo.setText(d.getCorreo());
     }//GEN-LAST:event_btnAnteriorActionPerformed
 
     private void btnSiguienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSiguienteActionPerformed
-        // TODO add your handling code here:
+            list.siguiente();
+        Docente d = list.getDocente();  
+         txtCodigo.setText(String.valueOf(d.getCodigo()));
+            txtNombre.setText(d.getNombre());
+            txtDireccion.setText(d.getDireccion());
+            txtNacimiento.setText(sdf.format(d.getFechanacimiento()));
+            txtTalla.setText(String.valueOf(d.getTalla()));
+            txtCorreo.setText(d.getCorreo());
     }//GEN-LAST:event_btnSiguienteActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         // TODO add your handling code here:
+        habilitarMovimiento(true);
+        habilitarEdicion(true);
+        habilitarCajas(false);
+        Docente d = list.getDocente();
+       txtCodigo.setText(String.valueOf(d.getCodigo()));
+            txtNombre.setText(d.getNombre());
+            txtDireccion.setText(d.getDireccion());
+            txtNacimiento.setText(sdf.format(d.getFechanacimiento()));
+            txtTalla.setText(String.valueOf(d.getTalla()));
+            txtCorreo.setText(d.getCorreo());
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnUltimoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUltimoActionPerformed
-        // TODO add your handling code here:
+            list.ultimo();
+        Docente d = list.getDocente();  
+         txtCodigo.setText(String.valueOf(d.getCodigo()));
+            txtNombre.setText(d.getNombre());
+            txtDireccion.setText(d.getDireccion());
+            txtNacimiento.setText(sdf.format(d.getFechanacimiento()));
+            txtTalla.setText(String.valueOf(d.getTalla()));
+            txtCorreo.setText(d.getCorreo());
     }//GEN-LAST:event_btnUltimoActionPerformed
 
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
-        // TODO add your handling code here:
+        agregando = true;
+        habilitarCajas(true);
+        habilitarEdicion(false);
+        habilitarMovimiento(false);
+        limpiarCajas();
     }//GEN-LAST:event_btnAgregarActionPerformed
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
