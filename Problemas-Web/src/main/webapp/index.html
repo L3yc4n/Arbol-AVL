@@ -1,10 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
     <head>
-        <title>Start Page</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="UTF-8">
+        <title>Verificar Balanceo de Paréntesis</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <h1>Verificar Balanceo de Paréntesis, Corchetes y Llaves</h1>
+        <label for="formula">Ingresa la fórmula:</label><br>
+        <input type="text" id="formula" value="([({})]}"><br><br>
+        <button onclick="verificarBalanceo()">Verificar</button>
+        <p id="resultado"></p>
+        <script src="script003.js" type="text/javascript"></script>
     </body>
 </html>
