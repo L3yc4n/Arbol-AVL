@@ -17,7 +17,7 @@ public class arrayDocente {
         ubi = lista.size()-1;
     }
     SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/yy");
-    public String imprimir(){
+    public String mostrar(){
        String resultado=" ";
         for (Docente docente : lista) {
             resultado += docente.getCodigo()+" - "+docente.getNombre()+" - "+docente.getDireccion()+" - "+sdf.format(docente.getFechanacimiento())+" - "+docente.getTalla()+" - "+docente.getCorreo()+"\n";
@@ -44,14 +44,14 @@ public class arrayDocente {
         ubi = lista.size() - 1;
     }
     
-    public Docente getAlumno(){
+    public Docente getDocente(){
         if(ubi >= 0 && ubi < lista.size()){
             return lista.get(ubi);
         }
         return null;
     }
     
-    public void setAlumno(Docente a){
+    public void setDocente(Docente a){
         lista.set(ubi, a);
     }
     
