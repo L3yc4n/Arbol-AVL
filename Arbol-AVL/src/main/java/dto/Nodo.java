@@ -1,26 +1,26 @@
 package dto;
 
 public class Nodo {
-    private int inferior;
+    private int valor;
     private Nodo izquierda;
     private Nodo derecha;
     private int contador;
     private int altura;
     
     public Nodo(int valor){
-        inferior = valor;
+        this.valor = valor;
         izquierda = null;
         derecha = null;
         contador = 1;
         altura = 1;
     }
 
-    public int getInferior() {
-        return inferior;
+    public int getValor() {
+        return valor;
     }
 
-    public void setInferior(int inferior) {
-        this.inferior = inferior;
+    public void setValor(int valor) {
+        this.valor = valor;
     }
 
     public Nodo getIzquierda() {
@@ -43,8 +43,8 @@ public class Nodo {
         return contador;
     }
 
-    public void setContador(int contador) {
-        this.contador = contador;
+    public void incrementarContador() {
+        this.contador++;
     }
 
     public int getAltura() {
