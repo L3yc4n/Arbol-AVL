@@ -41,9 +41,9 @@ class Nodo {
 }
 
 /* =========================================================
-   Árbol AVL  (nombre conservado: ABB)
+   Árbol AVL   
    ========================================================= */
-class ABB {
+class AVL {
   constructor() { this.raiz = null; }
 
   /* altura segura */
@@ -136,12 +136,12 @@ document.getElementById("confirmar").addEventListener("click", async () => {
 
   /* reiniciar escenario */
   document.getElementById("tree").innerHTML = "";
-  const arbol = new ABB();
+  const arbol = new AVL();
 
   /* insertar uno a uno con retardo para ver la animación */
   for (const n of nums) {
     arbol.raiz = arbol.agregar(arbol.raiz, n);  // inserta + balancea
     arbol.reposicionar(arbol.raiz);             // mueve nodos
-    await sleep(800);                           // espera 0.8 s
+    await sleep(900);                           // espera 0.9  s
   }
 });
