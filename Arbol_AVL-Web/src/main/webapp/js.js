@@ -27,50 +27,54 @@ class Nodo {
     
     return d;
   }
-
 mover(x, y, padre = null) {
   this.x = x;
   this.y = y;
-  this.dom.style.left = x + "px";
-  this.dom.style.top  = y + "px";
+  this.dom.style.left = x + 'px';
+  this.dom.style.top = y + 'px';
 
-  this.dom.classList.add('bounce');
   if (!this.animado) {
     this.dom.classList.add('bounce');
     this.animado = true;
   }
 
- if (padre && this.linea) {
-  const x1 = padre.x + 7.5, y1 = padre.y + 10;
-  const x2 = this.x + 7.5,   y2 = this.y + 19;
-  const dx = x2 - x1, dy = y2 - y1;
-  const d = Math.hypot(dx, dy);
-  const ox = (dx / d) * 24, oy = (dy / d) * 24;
+  if (padre && this.linea) {
+    const x1 = padre.x + 7.5, y1 = padre.y + 10;
+    const x2 = this.x + 7.5,   y2 = this.y + 19;
+    const dx = x2 - x1, dy = y2 - y1;
+    const d = Math.hypot(dx, dy);
+    const ox = (dx / d) * 24, oy = (dy / d) * 24;
 
-  this.linea.setAttribute("x1", x1 + ox);
-  this.linea.setAttribute("y1", y1 + oy);
-  this.linea.setAttribute("x2", x2 - ox);
-  this.linea.setAttribute("y2", y2 - oy);
+    this.linea.setAttribute("x1", x1 + ox);
+    this.linea.setAttribute("y1", y1 + oy);
+    this.linea.setAttribute("x2", x2 - ox);
+    this.linea.setAttribute("y2", y2 - oy);
 
-  const length = this.linea.getTotalLength();
+    // ⚠️ reiniciar animación y remover punta
+    this.linea.removeAttribute("marker-end");
+    this.linea.classList.remove("linea-animada");
+    void this.linea.offsetWidth;
+    this.linea.classList.add("linea-animada");
 
-  // Quita la punta antes de animar:
-  this.linea.removeAttribute("marker-end");
+    // 🧹 limpiar cualquier listener anterior
+    if (this._listenerRef) {
+      this.linea.removeEventListener("animationend", this._listenerRef);
+    }
 
-  // Reinicia animación:
-  this.linea.style.animation = "none";
-  this.linea.classList.remove('linea-animada');
-  void this.linea.offsetWidth;  // reflow
-  this.linea.classList.add('linea-animada');
-  this.linea.style.animation = null;
+    // ✅ Listener seguro
+    this._listenerRef = () => {
+      this.linea.setAttribute("marker-end", "url(#flecha)");
+    };
+    this.linea.addEventListener("animationend", this._listenerRef, { once: true });
 
-  // Al terminar la animación agrega la punta:
-  this.linea.addEventListener('animationend', () => {
-    this.linea.setAttribute("marker-end", "url(#flecha)");
-  }, { once: true });
+    // 🛑 failsafe: en caso que no dispare el evento (por reinicio)
+    setTimeout(() => {
+      if (!this.linea.getAttribute("marker-end")) {
+        this.linea.setAttribute("marker-end", "url(#flecha)");
+      }
+    }, 1100); // un poco más que la duración de la animación
+  }
 }
-}
-
 
 
   /* getters convencionales, por si los usas en otra parte */
@@ -164,7 +168,6 @@ class AVL {
   this.reposicionar(n.getIzquierda(), x - sp, y + 80, sp / 1.5, n);
   this.reposicionar(n.getDerecha(),   x + sp, y + 80, sp / 1.5, n);
 }
-
 }
 
 /* =========================================================
@@ -187,6 +190,6 @@ document.getElementById("confirmar").addEventListener("click", async () => {
   for (const n of nums) {
     arbol.raiz = arbol.agregar(arbol.raiz, n);  // inserta + balancea
     arbol.reposicionar(arbol.raiz);             // mueve nodos
-    await sleep(2000);                           // espera 0.8 s
+    await sleep(1300);                           // espera 0.8 s
   }
 });
