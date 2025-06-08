@@ -124,7 +124,7 @@ input[type="text"]:focus {
 }
 
 .bounce {
-  animation: bounce 1.2s ease forwards;
+  animation: bounce 1s ease forwards;
 }
 
 .linea-animada {
