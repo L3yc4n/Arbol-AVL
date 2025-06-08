@@ -22,9 +22,27 @@
         </table>
     </div>
     <div class="result"></div>
-
 <h3 style="text-align: center; font-size: 28px;">Animación AVL</h3>
-<div id="tree"></div> 
+
+<!-- Contenedor principal que envuelve SVG y nodos -->
+<div id="contenedor" >
+
+  <!-- SVG para las flechas -->
+
+<svg id="aristas">
+  <defs>
+    <marker id="flecha" viewBox="0 0 10 10" refX="8" refY="5"
+            markerWidth="6" markerHeight="6"
+            orient="auto" fill="#84acfc">
+      <path d="M 0 0 L 10 5 L 0 10 z" />
+    </marker>
+  </defs>
+</svg>
+
+  <div id="tree"></div>
+</div>
+
+
 
 </body>
     <script src="js.js"></script>
