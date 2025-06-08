@@ -1,18 +1,30 @@
 <!DOCTYPE html>
-<html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <title>Balanceo</title>
-    </head>
-    <body>
-        <h1>Verificar Balanceo  - Problema</h1>
-        <h3>Evaluación 1: “({})[]”</h3>
-        <h3>Evaluación 2: “{[()]}”</h3>
-        <h3>Evaluación 3: “({[)]}”</h3>
-        <label for="formula">Ingresa la fórmula:</label><br>
-        <input type="text" id="formula" value="([({})]}"><br><br>
-        <button onclick="verificarBalanceo()">Verificar</button>
-        <p id="resultado"></p>
-        <script src="script001.js" type="text/javascript"></script>
-    </body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arbol-AVL</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="card">
+        <h1>ARBOL AVL</h1>
+        <table>
+            <tr>
+                <td> Escriba los numeros separados por coma:</td>                
+            </tr>
+            <tr>
+                <td><input type="text" id="numeros"></td>
+            </tr>
+            <tr>
+                <td><button id="confirmar">CONFIRMAR</button></td>
+            </tr>
+        </table>
+    </div>
+    <div class="result">
+        
+    </div>
+
+</body>
+    <script src="js.js"></script>
 </html>
