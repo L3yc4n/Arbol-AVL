@@ -61,14 +61,38 @@ input[type="text"]:focus {
      color: #141424;
      transition: 0.3s ease;
 }
-
-  #tree {     
+#contenedor {
+    position: relative; 
+    width: 1000px;
+    height: 600px;
+    margin: auto;
+}
+#tree {     
     width: 440px;  
     margin: 0; margin: auto; 
     box-sizing: border-box;
-    position: relative; 
+    position: relative;
+    z-index: 10;
     right: 300px;  
  }
+ #aristas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1000px;     
+  height: 600px;     
+  pointer-events: none;
+  z-index: 0;       
+}
+
+#aristas line {
+  stroke: #c6d9fd;
+  stroke-width: 3;
+  stroke-dasharray: 5,5; 
+  marker-end: url(#flecha); 
+}
+
+
   .node {
     position: absolute;
     width:42px; height:42px; line-height:42px;
@@ -79,3 +103,41 @@ input[type="text"]:focus {
     transition: left .5s ease, top .5s ease;   
     box-shadow: 0 2px 8px rgba(0,0,0,.25);
   }
+@keyframes bounce {
+  0% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(2) rotate(180deg);
+    opacity: 1;
+  }
+  70% {
+    transform: scale(1) rotate(180deg);
+  }
+  85% {
+    transform: translateX(5px) rotate(180deg);
+  }
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
+}
+
+.bounce {
+  animation: bounce 1.2s ease forwards;
+}
+
+.linea-animada {
+  stroke: #84acfc;
+  stroke-width: 2;
+  fill: none;
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  animation: dibujarLinea 1s forwards ease-out;
+}
+
+@keyframes dibujarLinea {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
