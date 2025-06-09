@@ -1,65 +1,64 @@
-/* Constantes para mover la animacion*/
-const INIT_X        = 500;
-const INIT_Y        = 0;
-const H_GAP         = 110;
-const V_GAP         = 100;
-const SP_FACTOR     = 1.6;
-const NODE_MARGIN   = 28;
+/* Constantes para moverr la animacion*/
+const posicionX = 500;//posiciion del div x
+const posicionY = 0;  // posicion del vi y
+const A_Horizontal = 200;  // alturas entre nodos
+const A_Vertical = 100; 
+const factorSeparacion  = 2.2; //factor entre separacion de cada nodo
+const margenNodo = 38;  // tamaño de la linea que une a nodos
 
 /* Nodo del AVL  */
 class Node {
   constructor(value) {
-    this.value   = value;
-    this.left    = null;
-    this.right   = null;
-    this.height  = 1;
+    this.value    = value; // valor ingresado "11,22,10"
+    this.izquierdo = null; 
+    this.derecho   = null;
+    this.altura    = 1;
     this.x = 0;
     this.y = 0;
-    this.dom = this._createNode();
+    this.nodo = this._createNode(); //divNodo
   }
 
   _createNode() {
-    const el = document.createElement('div');
-    el.className     = 'node';
-    el.textContent   = this.value;
-    el.style.left    = '0px';
-    el.style.top     = '0px';
-    document.getElementById('tree').appendChild(el);
-    this.edge = document.createElementNS(
-      'http://www.w3.org/2000/svg', 'line'
-    );
-    this.edge.classList.add('con-flecha');
-    document.getElementById('aristas').appendChild(this.edge);
-    return el;
+    const nodoDiv = document.createElement('div'); // crear un elemento div, lo llamo nodoDiv 
+    nodoDiv.className     = 'node'; // utilizo la clase node en css
+    nodoDiv.textContent   = this.value;  // valores "11,12,13"
+    nodoDiv.style.left    = '0px'; // posiciones absolutas en la esquinas, luego en css se centra el node
+    nodoDiv.style.top     = '0px';
+    document.getElementById('tree').appendChild(nodoDiv); // añade los nodoDiv al div tree
+    this.flecha = document.createElementNS(
+      'http://www.w3.org/2000/svg', 'line'); // creo un svg de la clase linea
+    this.flecha.classList.add('con-flecha');
+    document.getElementById('aristas').appendChild(this.flecha); //añado las flechas al div aristas
+    return nodoDiv;
   }
-
-  move(x, y, padre = null) {
+  // Esta parte es para mover los nodosDivs -- es mejor solo explicar la logica del balanceo
+  mover(x, y, padre = null) {
     this.x = x;
     this.y = y;
-    this.dom.style.left = `${x}px`;
-    this.dom.style.top  = `${y}px`;
-    this.dom.classList.add('bounce');
+    this.nodo.style.left = `${x}px`;  // posiciones ingresadas para utilizar
+    this.nodo.style.top  = `${y}px`;
+    this.nodo.classList.add('bounce'); // utilizo la animacion bounce-la de css
 
     if (padre) {
-      const x1 = padre.x + 9;
+      const x1 = padre.x + 9; // se calcula las coordenas del nodo Padre para el nuevo nodo
       const y1 = padre.y + 10;
       const x2 = x + 9;
       const y2 = y + 19;
-      const dx = x2 - x1;
-      const dy = y2 - y1;
-      const dist = Math.hypot(dx, dy);
-      const ox = (dx / dist) * NODE_MARGIN;
-      const oy = (dy / dist) * NODE_MARGIN;
-      this.edge.setAttribute('x1', x1 + ox);
-      this.edge.setAttribute('y1', y1 + oy);
-      this.edge.setAttribute('x2', x2 - ox);
-      this.edge.setAttribute('y2', y2 - oy);
-      this.edge.classList.add('linea-animada');
-      this.edge.addEventListener(
+      const dx = x2 - x1; // diferencias de abcisas 
+      const dy = y2 - y1; // diferencia de ordenadas
+      const dist = Math.hypot(dx, dy);  // distania entre 2 puntos
+      const ox = (dx / dist) * margenNodo;  // cordendas finales para mover *
+      const oy = (dy / dist) * margenNodo; // el margen nodo, es el tamaño de la flecha a nodo,
+      this.flecha.setAttribute('x1', x1 + ox); //Establece las coordenadas de la línea SVG 
+      this.flecha.setAttribute('y1', y1 + oy);  //para que conecte desde el nodo padre hasta el nodo hijo.
+      this.flecha.setAttribute('x2', x2 - ox);
+      this.flecha.setAttribute('y2', y2 - oy);
+      this.flecha.classList.add('linea-animada');// Añade una clase CSS para aplicar alguna animación visual
+      this.flecha.addEventListener(
         'animationend',
-        () => this.edge.setAttribute('marker-end', 'url(#flecha)'),
+        () => this.flecha.setAttribute('marker-end', 'url(#flecha)'),
         { once: true }
-      );
+      ); //Luego le añade una flecha al final de la línea SVG, usando un marcador SVG (marker-end).
     }
   }
 }
@@ -68,80 +67,104 @@ class Node {
 //---------------------------------------------
 class AVL {
   constructor() {
-    this.root = null;
+    this.raiz = null; // La raíz del árbol AVL
   }
-  _height(node) {
-    return node ? node.height : 0; 
+
+  // Devuelve la altura de un nodo (o 0 si es nulo)
+  _altura(nodo) {
+    return nodo ? nodo.altura : 0;
   }
-  _recalc(node) {
-    node.height = Math.max(
-      this._height(node.left),
-      this._height(node.right)
+
+  // Recalcula la altura de un nodo según sus hijos
+  _recalcularAltura(nodo) {
+    nodo.altura = Math.max(
+      this._altura(nodo.izquierdo),
+      this._altura(nodo.derecho)
     ) + 1;
   }
 
-  _FE(node) {
-    return this._height(node.right) - this._height(node.left);
+  // Calcula el factor de equilibrio de un nodo
+  _factorEquilibrio(nodo) {
+    return this._altura(nodo.derecho) - this._altura(nodo.izquierdo);
   }
 
-  _rotateRight(y) {
-    const x  = y.left;
-    const T2 = x.right;
-    x.right = y;
-    y.left  = T2;
-    this._recalc(y);
-    this._recalc(x);
-    return x;
+  // Rotación simple a la derecha (caso izquierda-izquierda)
+  _rotarDerecha(nodoDesbalanceado) {
+    const nuevaRaiz = nodoDesbalanceado.izquierdo;
+    const subArbolDerecho = nuevaRaiz.derecho;
+
+    nuevaRaiz.derecho = nodoDesbalanceado;
+    nodoDesbalanceado.izquierdo = subArbolDerecho;
+
+    this._recalcularAltura(nodoDesbalanceado);
+    this._recalcularAltura(nuevaRaiz);
+
+    return nuevaRaiz;
   }
 
-  _rotateLeft(x) {
-    const y  = x.right;
-    const T2 = y.left;
-    y.left  = x;
-    x.right = T2;
-    this._recalc(x);
-    this._recalc(y);
-    return y;
+  // Rotación simple a la izquierda (caso derecha-derecha)
+  _rotarIzquierda(nodoDesbalanceado) {
+    const nuevaRaiz = nodoDesbalanceado.derecho;
+    const subArbolIzquierdo = nuevaRaiz.izquierdo;
+
+    nuevaRaiz.izquierdo = nodoDesbalanceado;
+    nodoDesbalanceado.derecho = subArbolIzquierdo;
+
+    this._recalcularAltura(nodoDesbalanceado);
+    this._recalcularAltura(nuevaRaiz);
+
+    return nuevaRaiz;
   }
 
-  insert(node, value) {
-    if (!node) return new Node(value);
-    if (value < node.value) node.left  = this.insert(node.left, value);
-    else if (value > node.value) node.right = this.insert(node.right, value);
-    // duplicados ignorados
-    this._recalc(node);
-    const FE = this._FE(node);
-    if (FE < -1 && value < node.left.value)        return this._rotateRight(node);
-    if (FE >  1 && value > node.right.value)       return this._rotateLeft(node);
-    if (FE < -1 && value > node.left.value) {
-      node.left = this._rotateLeft(node.left);
-      return this._rotateRight(node);
+  // Inserta un valor en el árbol y mantiene el balance
+  insertar(nodo, valor) {
+    if (!nodo) return new Node(valor); // Nuevo nodo si está vacío
+
+    // Recursión hacia izquierda o derecha según el valor
+    if (valor < nodo.value)
+      nodo.izquierdo = this.insertar(nodo.izquierdo, valor);
+    else if (valor > nodo.value)
+      nodo.derecho = this.insertar(nodo.derecho, valor);
+
+    // Recalcula altura y balancea
+    this._recalcularAltura(nodo);
+    const fe = this._factorEquilibrio(nodo);
+
+    // Cuatro posibles casos de desbalance
+    if (fe < -1 && valor < nodo.izquierdo.value)
+      return this._rotarDerecha(nodo);
+    if (fe > 1 && valor > nodo.derecho.value)
+      return this._rotarIzquierda(nodo);
+    if (fe < -1 && valor > nodo.izquierdo.value) {
+      nodo.izquierdo = this._rotarIzquierda(nodo.izquierdo);
+      return this._rotarDerecha(nodo);
     }
-    if (FE >  1 && value < node.right.value) {
-      node.right = this._rotateRight(node.right);
-      return this._rotateLeft(node);
+    if (fe > 1 && valor < nodo.derecho.value) {
+      nodo.derecho = this._rotarDerecha(nodo.derecho);
+      return this._rotarIzquierda(nodo);
     }
-    return node;
+
+    return nodo; // ya balanceado
   }
 
-  reposition(node, x = INIT_X, y = INIT_Y, spacing = H_GAP, padre = null) {
-    if (!node) return;
-    node.move(x, y, padre);
+  // Posiciona visualmente cada nodo en el DOM
+  reposition(nodo, x = posicionX, y = posicionY, espacio = A_Horizontal, padre = null) {
+    if (!nodo) return;
+    nodo.mover(x, y, padre);
     this.reposition(
-      node.left,  x - spacing,     y + V_GAP, spacing / SP_FACTOR, node
+      nodo.izquierdo, x - espacio, y + A_Vertical, espacio / factorSeparacion, nodo
     );
     this.reposition(
-      node.right, x + spacing,     y + V_GAP, spacing / SP_FACTOR, node
+      nodo.derecho,  x + espacio, y + A_Vertical, espacio / factorSeparacion, nodo
     );
   }
 }
+
 
 /* Lógica de UI (interfaz de usuario)*/
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 document.getElementById('confirmar').addEventListener('click', async () => {
-
-
   const input = document.getElementById('numeros');
   const values = input.value.trim().split(',').map(s => Number(s.trim())).filter(n => !isNaN(n));
   if (!values.length) {
@@ -149,12 +172,13 @@ document.getElementById('confirmar').addEventListener('click', async () => {
     return;
   }
   document.getElementById('tree').innerHTML = '';
+  const aristas = document.getElementById('aristas');
   aristas.querySelectorAll('line').forEach(line => line.remove());
   input.value = '';
   const tree = new AVL();
   for (const v of values) {
-    tree.root = tree.insert(tree.root, v);
-    tree.reposition(tree.root);
+    tree.raiz = tree.insertar(tree.raiz, v);
+    tree.reposition(tree.raiz);
     await sleep(1200); // 1.2 segundos de animaacion
   }
 });
