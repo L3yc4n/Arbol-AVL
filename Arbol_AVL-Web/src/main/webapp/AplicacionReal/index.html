@@ -38,35 +38,31 @@
                 }
 
                 altura(nodo) {
-                    if (nodo !== null) {
-                        return nodo.altura;
-                    } else {
-                        return 0;
-                    }
+                    return nodo !== null ? nodo.altura : 0;
                 }
 
                 factorEquilibrio(nodo) {
                     return this.altura(nodo.der) - this.altura(nodo.izq);
                 }
 
-                rotarIzq(z) {
-                    const y = z.der;
-                    const T2 = y.izq;
-                    y.izq = z;
-                    z.der = T2;
-                    z.altura = 1 + Math.max(this.altura(z.izq), this.altura(z.der));
-                    y.altura = 1 + Math.max(this.altura(y.izq), this.altura(y.der));
-                    return y;
+                rotarIzq(nodito) {
+                    const auxi = nodito.der;
+                    const T2 = auxi.izq;
+                    auxi.izq = nodito;
+                    nodito.der = T2;
+                    nodito.altura = 1 + Math.max(this.altura(nodito.izq), this.altura(nodito.der));
+                    auxi.altura = 1 + Math.max(this.altura(auxi.izq), this.altura(auxi.der));
+                    return auxi;
                 }
 
-                rotarDer(z) {
-                    const y = z.izq;
-                    const T3 = y.der;
-                    y.der = z;
-                    z.izq = T3;
-                    z.altura = 1 + Math.max(this.altura(z.izq), this.altura(z.der));
-                    y.altura = 1 + Math.max(this.altura(y.izq), this.altura(y.der));
-                    return y;
+                rotarDer(nodito) {
+                    const auxi = nodito.izq;
+                    const T3 = auxi.der;
+                    auxi.der = nodito;
+                    nodito.izq = T3;
+                    nodito.altura = 1 + Math.max(this.altura(nodito.izq), this.altura(nodito.der));
+                    auxi.altura = 1 + Math.max(this.altura(auxi.izq), this.altura(auxi.der));
+                    return auxi;
                 }
 
                 equilibrar(nodo) {
@@ -136,5 +132,3 @@
         </script>
     </body>
 </html>
-
-
