@@ -38,7 +38,11 @@
                 }
 
                 altura(nodo) {
-                    return nodo !== null ? nodo.altura : 0;
+                    if (nodo !== null) {
+                        return nodo.altura;
+                    } else {
+                        return 0;
+                    }
                 }
 
                 factorEquilibrio(nodo) {
@@ -101,23 +105,27 @@
                     this.raiz = this.insertarNodo(this.raiz, usuario);
                 }
 
+                // inorden
                 recorrer(nodo, lista = []) {
-                    if (!nodo)
+                    if (nodo === null)
                         return;
                     this.recorrer(nodo.izq, lista);
-                    lista.push(`ID: ${nodo.usuario.id}, Nombre: ${nodo.usuario.nombre}, Correo: ${nodo.usuario.correo}`);
+                    lista.push("ID:" + nodo.usuario.id + " Nombre:" + nodo.usuario.nombre + " Correo:" + nodo.usuario.correo);
                     this.recorrer(nodo.der, lista);
                     return lista;
                 }
             }
 
+            //intanciano nuevo arbolito
             const arbol = new AVL();
 
             function insertar() {
                 const id = parseInt(document.getElementById("id").value);
                 const nombre = document.getElementById("nombre").value.trim();
                 const correo = document.getElementById("correo").value.trim();
+                //Verifica si es una numero valido
                 if (!isNaN(id) && nombre && correo) {
+                    //Instanciamos nuevo usuario
                     const nuevoUsuario = new Usuario(id, nombre, correo);
                     arbol.agregar(nuevoUsuario);
                     const lista = arbol.recorrer(arbol.raiz);
@@ -132,3 +140,4 @@
         </script>
     </body>
 </html>
+
