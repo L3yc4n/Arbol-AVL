@@ -1,165 +1,160 @@
-class Nodo {
-  constructor(valor, x = 0, y = 0) {
-    this.valor      = valor;
-    this.izquierda  = null;
-    this.derecha    = null;
-    this.contador   = 1;
-    this.altura     = 1;
-    /* --- coordenadas + div visual --- */
+/* Constantes para mover la animacion*/
+const INIT_X        = 500;
+const INIT_Y        = 0;
+const H_GAP         = 110;
+const V_GAP         = 100;
+const SP_FACTOR     = 1.6;
+const NODE_MARGIN   = 28;
+
+/* Nodo del AVL  */
+class Node {
+  constructor(value) {
+    this.value   = value;
+    this.left    = null;
+    this.right   = null;
+    this.height  = 1;
+    this.x = 0;
+    this.y = 0;
+    this.dom = this._createNode();
+  }
+
+  _createNode() {
+    const el = document.createElement('div');
+    el.className     = 'node';
+    el.textContent   = this.value;
+    el.style.left    = '0px';
+    el.style.top     = '0px';
+    document.getElementById('tree').appendChild(el);
+    this.edge = document.createElementNS(
+      'http://www.w3.org/2000/svg', 'line'
+    );
+    this.edge.classList.add('con-flecha');
+    document.getElementById('aristas').appendChild(this.edge);
+    return el;
+  }
+
+  move(x, y, padre = null) {
     this.x = x;
     this.y = y;
-    this.dom = this.#crearDom();
-  }
-  #crearDom() {
-    const d = document.createElement("div");
-    d.className = "node";
-    d.textContent = this.valor;
-    d.style.left = this.x + "px";
-    d.style.top  = this.y + "px";
-    document.getElementById("tree").appendChild(d);
-    this.linea = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    this.linea.classList.add("con-flecha");
-    document.getElementById("aristas").appendChild(this.linea);    
-    return d;
-  }
-
-mover(x, y, padre = null) {
-  this.x = x;
-  this.y = y;
-  this.dom.style.left = x + 'px';
-  this.dom.style.top = y + 'px';
-
-  if (!this.animado) {
+    this.dom.style.left = `${x}px`;
+    this.dom.style.top  = `${y}px`;
     this.dom.classList.add('bounce');
-    this.animado = true;
-  }
 
-  if (padre && this.linea) {
-    const x1 = padre.x + 9, y1 = padre.y + 10;
-    const x2 = this.x + 9,   y2 = this.y + 19;
-    const dx = x2 - x1, dy = y2 - y1;
-    const d = Math.hypot(dx, dy);
-    const ox = (dx / d) * 24, oy = (dy / d) * 24;
-    this.linea.setAttribute("x1", x1 + ox);
-    this.linea.setAttribute("y1", y1 + oy);
-    this.linea.setAttribute("x2", x2 - ox);
-    this.linea.setAttribute("y2", y2 - oy);
-    // Iniciar la animación 
-    this.linea.classList.add("linea-animada");
-    // Listener seguro
-    this._listenerRef = () => {
-      this.linea.setAttribute("marker-end", "url(#flecha)");
-    };
-    this.linea.addEventListener("animationend", this._listenerRef, { once: true });
+    if (padre) {
+      const x1 = padre.x + 9;
+      const y1 = padre.y + 10;
+      const x2 = x + 9;
+      const y2 = y + 19;
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const dist = Math.hypot(dx, dy);
+      const ox = (dx / dist) * NODE_MARGIN;
+      const oy = (dy / dist) * NODE_MARGIN;
+      this.edge.setAttribute('x1', x1 + ox);
+      this.edge.setAttribute('y1', y1 + oy);
+      this.edge.setAttribute('x2', x2 - ox);
+      this.edge.setAttribute('y2', y2 - oy);
+      this.edge.classList.add('linea-animada');
+      this.edge.addEventListener(
+        'animationend',
+        () => this.edge.setAttribute('marker-end', 'url(#flecha)'),
+        { once: true }
+      );
+    }
   }
 }
-  // getters y setters para los usos
-  getValor()            { return this.valor; }
-  getIzquierda()        { return this.izquierda; }
-  getDerecha()          { return this.derecha; }
-  getAltura()           { return this.altura; }
-  setIzquierda(n)       { this.izquierda = n; }
-  setDerecha(n)         { this.derecha   = n; }
-  setAltura(h)          { this.altura    = h; }
-  incrementarContador() { this.contador++; }
-}
-
-/* =========================================================
-   Árbol AVL  
-   ========================================================= */
+//---------------------------------------------
+//-------------Árbol AVL-------------------- //
+//---------------------------------------------
 class AVL {
-  constructor() { this.raiz = null; }
-  /* altura segura  , con operador ternario*/
-  altura(n) { return n ? n.getAltura() : 0; }
+  constructor() {
+    this.root = null;
+  }
+  _height(node) {
+    return node ? node.height : 0; 
+  }
+  _recalc(node) {
+    node.height = Math.max(
+      this._height(node.left),
+      this._height(node.right)
+    ) + 1;
+  }
 
-  /* --------- Rotaciones básicas --------- */
-  rDer(y) {
-    const x  = y.getIzquierda();
-    const T2 = x.getDerecha();
-    x.setDerecha(y);
-    y.setIzquierda(T2);
-    y.setAltura(Math.max(this.altura(y.getIzquierda()),
-                         this.altura(y.getDerecha())) + 1);
-    x.setAltura(Math.max(this.altura(x.getIzquierda()),
-                         this.altura(x.getDerecha())) + 1);
+  _FE(node) {
+    return this._height(node.right) - this._height(node.left);
+  }
+
+  _rotateRight(y) {
+    const x  = y.left;
+    const T2 = x.right;
+    x.right = y;
+    y.left  = T2;
+    this._recalc(y);
+    this._recalc(x);
     return x;
   }
-  rIzq(x) {
-    const y  = x.getDerecha();
-    const T2 = y.getIzquierda();
-    y.setIzquierda(x);
-    x.setDerecha(T2);
-    x.setAltura(Math.max(this.altura(x.getIzquierda()),
-                         this.altura(x.getDerecha())) + 1);
-    y.setAltura(Math.max(this.altura(y.getIzquierda()),
-                         this.altura(y.getDerecha())) + 1);
+
+  _rotateLeft(x) {
+    const y  = x.right;
+    const T2 = y.left;
+    y.left  = x;
+    x.right = T2;
+    this._recalc(x);
+    this._recalc(y);
     return y;
   }
 
-  FE(n) { return this.altura(n?.getDerecha()) - this.altura(n?.getIzquierda()); }
-
-  /* --------- Inserción con coords iniciales --------- */
-  agregar(n, val, x = 500, y = 40, sp = 120) {
-    if (!n) return new Nodo(val, x, y);
-
-    if (val < n.getValor())
-      n.setIzquierda(this.agregar(n.getIzquierda(), val, x - sp, y + 80, sp / 1.5));
-    else if (val > n.getValor())
-      n.setDerecha(this.agregar(n.getDerecha(),   val, x + sp, y + 80, sp / 1.5));
-    else
-      n.incrementarContador();                        // valor duplicado
-
-    /* actualizar altura y equilibrar */
-    n.setAltura(Math.max(this.altura(n.getIzquierda()),
-                         this.altura(n.getDerecha())) + 1);
-    /* equilibrio */
-    const fe = this.FE(n);
-    // LL
-    if (fe < -1 && val < n.getIzquierda().getValor()) return this.rDer(n);
-    // RR
-    if (fe >  1 && val > n.getDerecha().getValor())   return this.rIzq(n);
-    // LR
-    if (fe < -1 && val > n.getIzquierda().getValor()) {
-      n.setIzquierda(this.rIzq(n.getIzquierda()));
-      return this.rDer(n);
+  insert(node, value) {
+    if (!node) return new Node(value);
+    if (value < node.value) node.left  = this.insert(node.left, value);
+    else if (value > node.value) node.right = this.insert(node.right, value);
+    // duplicados ignorados
+    this._recalc(node);
+    const FE = this._FE(node);
+    if (FE < -1 && value < node.left.value)        return this._rotateRight(node);
+    if (FE >  1 && value > node.right.value)       return this._rotateLeft(node);
+    if (FE < -1 && value > node.left.value) {
+      node.left = this._rotateLeft(node.left);
+      return this._rotateRight(node);
     }
-    // RL
-    if (fe >  1 && val < n.getDerecha().getValor()) {
-      n.setDerecha(this.rDer(n.getDerecha()));
-      return this.rIzq(n);
+    if (FE >  1 && value < node.right.value) {
+      node.right = this._rotateRight(node.right);
+      return this._rotateLeft(node);
     }
-    return n;
+    return node;
   }
 
-  /* --------- Recolocar nodos en pantalla --------- */
- reposicionar(n, x = 500, y = 40, sp = 120, padre = null) {
-  if (!n) return;
-  n.mover(x, y, padre);
-  this.reposicionar(n.getIzquierda(), x - sp, y + 80, sp / 1.5, n);
-  this.reposicionar(n.getDerecha(),   x + sp, y + 80, sp / 1.5, n);
+  reposition(node, x = INIT_X, y = INIT_Y, spacing = H_GAP, padre = null) {
+    if (!node) return;
+    node.move(x, y, padre);
+    this.reposition(
+      node.left,  x - spacing,     y + V_GAP, spacing / SP_FACTOR, node
+    );
+    this.reposition(
+      node.right, x + spacing,     y + V_GAP, spacing / SP_FACTOR, node
+    );
+  }
 }
-}
-/* =========================================================
-   Lógica UI(user interface): leer entrada, insertar secuencialmente, animar
-   ========================================================= */
+
+/* Lógica de UI (interfaz de usuario)*/
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-document.getElementById("confirmar").addEventListener("click", async () => {
-  // Obtiene los numeros y verifica que no sea null;
-  const raw = document.getElementById("numeros").value.trim();
-  if (!raw) { alert("Ingresa números separados por coma."); return; }
-  //Filtrado del input por comas
-  const nums = raw.split(",").map(s => +s.trim()).filter(n => !isNaN(n));
-  if (!nums.length) { alert("Todos los valores deben ser números."); return; }
-  // reinicia la animacion
-  document.getElementById("tree").innerHTML = "";
-  const arbol = new AVL();
-  // limpiar caja de numeros
-  const n = document.getElementById("numeros");
-  n.value ="";
-  for (const n of nums) {
-    arbol.raiz = arbol.agregar(arbol.raiz, n);  // inserta + balancea
-    arbol.reposicionar(arbol.raiz);             // mueve nodos
-    await sleep(1200);                           // espera 1.2 s
+
+document.getElementById('confirmar').addEventListener('click', async () => {
+
+
+  const input = document.getElementById('numeros');
+  const values = input.value.trim().split(',').map(s => Number(s.trim())).filter(n => !isNaN(n));
+  if (!values.length) {
+    alert('Ingresa números válidos separados por coma.');
+    return;
   }
-}
-);
+  document.getElementById('tree').innerHTML = '';
+  aristas.querySelectorAll('line').forEach(line => line.remove());
+  input.value = '';
+  const tree = new AVL();
+  for (const v of values) {
+    tree.root = tree.insert(tree.root, v);
+    tree.reposition(tree.root);
+    await sleep(1200); // 1.2 segundos de animaacion
+  }
+});
